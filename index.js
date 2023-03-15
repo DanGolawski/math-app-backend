@@ -1,10 +1,12 @@
 const express = require('express')
 const sqlite3 = require('sqlite3').verbose();
+const cors = require('cors');
 
 const app = express()
 const port = process.env.PORT || 3000;
 
 app.use(express.json({expended: true}))
+app.use(cors());
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
