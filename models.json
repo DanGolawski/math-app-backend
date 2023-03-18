@@ -1,0 +1,38 @@
+{
+  "book": {
+    "title": "",
+    "id": "",
+    "chapters": [
+      {
+        "number": 0,
+        "name": "",
+        "subchapters": [
+          {
+            "number": 0,
+            "name": "",
+            "numberOfExercises": 0
+          }
+        ]
+      }
+    ]
+  },
+  "exercise": {
+    "bookId": "",
+    "chapterNumber": 0,
+    "subchapterNumber": 0,
+    "imageUrl": "",
+    "videoUrl": "",
+    "mathematicalFormulaIds": [],
+    "reminders": []
+  },
+  "mathematicalFormula": {
+    "id": 0,
+    "keyword": "",
+    "url": ""
+  },
+  "recomended_book": {
+    "title": "",
+    "author": "",
+    "imageUrl": ""
+  }
+}
