@@ -31,7 +31,6 @@ def execute_sql_insert_with_response(sql_code, status_code):
 def execute_sql_select_with_response(sql_code, status_code):
    try:
       records = execute_sql_select(sql_code)
-      print(records)
       if status_code:
          return jsonify(records), 200
       else:
@@ -55,7 +54,7 @@ def execute_sql_insert(sql_code):
    print("Successfully Connected to SQLite")
    cursor.execute(sql_code)
    sqliteConnection.commit()
-   print("Record inserted successfully into table ", cursor.rowcount)
+   print("Operation executed successfully")
    cursor.close()
 
 def execute_sql_select(sql_code):

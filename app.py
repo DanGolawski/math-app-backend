@@ -22,6 +22,12 @@ def get_recommended_videos():
     sql_code = 'SELECT * FROM recommendedvideos'
     return execute_sql_select_with_response(sql_code, True)
 
+@app.route('/recommended-videos/<videoId>', methods=['DELETE'])
+def delete_recommended_video(videoId):
+    sql_code = f'DELETE FROM recommendedvideos WHERE id={videoId};'
+    return execute_sql_insert_with_response(sql_code, True)
+
+
 # RECOMMENDED BOOKS
 @app.route('/recommended-books', methods=['POST'])
 def add_recommended_books():
@@ -33,6 +39,11 @@ def add_recommended_books():
 def get_recommended_books():
     sql_code = 'SELECT * FROM recommendedbooks;'
     return execute_sql_select_with_response(sql_code, True)
+
+@app.route('/recommended-videos/<bookId>', methods=['DELETE'])
+def delete_recommended_book(bookId):
+    sql_code = f'DELETE FROM recommendedbooks WHERE id={bookId};'
+    return execute_sql_insert_with_response(sql_code, True)
 
 # MATH BOOKS
 @app.route('/books', methods=['POST'])
@@ -71,7 +82,6 @@ def get_chapters_with_subchapters_for_book():
 # EXERCISES
 @app.route('/exercises', methods=['POST'])
 def add_new_exercise():
-    print(request.json['bookId'])
     exercise = request.json
     sql_code = f'INSERT INTO exercises (bookId, chapterNumber, subchapterNumber, number, imageUrl, videoUrl, identifier) VALUES ("{exercise["bookId"]}", {exercise["chapterNumber"]}, {exercise["subchapterNumber"]}, {exercise["number"]}, "{exercise["imageUrl"]}", "{exercise["videoUrl"]}", "{exercise["bookId"]}_{exercise["chapterNumber"]}_{exercise["subchapterNumber"]}")'
     return execute_sql_insert_with_response(sql_code, True)
