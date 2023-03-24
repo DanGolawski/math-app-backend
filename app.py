@@ -40,7 +40,7 @@ def get_recommended_books():
     sql_code = 'SELECT * FROM recommendedbooks;'
     return execute_sql_select_with_response(sql_code, True)
 
-@app.route('/recommended-videos/<bookId>', methods=['DELETE'])
+@app.route('/recommended-books/<bookId>', methods=['DELETE'])
 def delete_recommended_book(bookId):
     sql_code = f'DELETE FROM recommendedbooks WHERE id={bookId};'
     return execute_sql_insert_with_response(sql_code, True)
