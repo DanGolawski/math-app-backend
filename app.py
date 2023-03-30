@@ -2,6 +2,7 @@ from flask import Flask, request
 from sql_service import *
 from math_book_service import *
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -14,7 +15,7 @@ def hello():
 @app.route('/recommended-videos', methods=['POST'])
 def add_recommended_video():
     new_video = request.json
-    sql_code = f'INSERT INTO recommendedvideos (author, title, url) VALUES ("{new_video["author"]}", "{new_video["title"]}", "{new_video["url"]}");'
+    sql_code = f"INSERT INTO recommendedvideos (author, title, url) VALUES ('{new_video['author']}', '{new_video['title']}', '{new_video['url']}');"
     return execute_sql_insert_with_response(sql_code, True)
 
 @app.route('/recommended-videos', methods=['GET'])
@@ -32,7 +33,7 @@ def delete_recommended_video(videoId):
 @app.route('/recommended-books', methods=['POST'])
 def add_recommended_books():
     new_book = request.json
-    sql_code = f'INSERT INTO recommendedbooks (author, title, imageUrl) VALUES ("{new_book["author"]}", "{new_book["title"]}", "{new_book["imageUrl"]}");'
+    sql_code = f"INSERT INTO recommendedbooks (author, title, imageUrl) VALUES ('{new_book['author']}', '{new_book['title']}', '{new_book['imageUrl']}');"
     return execute_sql_insert_with_response(sql_code, True)
 
 @app.route('/recommended-books', methods=['GET'])
@@ -83,7 +84,7 @@ def get_chapters_with_subchapters_for_book():
 @app.route('/exercises', methods=['POST'])
 def add_new_exercise():
     exercise = request.json
-    sql_code = f'INSERT INTO exercises (bookId, chapterNumber, subchapterNumber, number, imageUrl, videoUrl, identifier) VALUES ("{exercise["bookId"]}", {exercise["chapterNumber"]}, {exercise["subchapterNumber"]}, {exercise["number"]}, "{exercise["imageUrl"]}", "{exercise["videoUrl"]}", "{exercise["bookId"]}_{exercise["chapterNumber"]}_{exercise["subchapterNumber"]}")'
+    sql_code = f"INSERT INTO exercises (bookId, chapterNumber, subchapterNumber, number, imageUrl, videoUrl, identifier) VALUES ('{exercise['bookId']}', {exercise['chapterNumber']}, {exercise['subchapterNumber']}, {exercise['number']}, '{exercise['imageUrl']}', '{exercise['videoUrl']}', '{exercise['bookId']}_{exercise['chapterNumber']}_{exercise['subchapterNumber']}')"
     return execute_sql_insert_with_response(sql_code, True)
 
 @app.route('/exercises', methods=['GET'])
@@ -92,7 +93,7 @@ def get_exercises():
     chapter_number = request.args.get('chapterNumber')
     subchapter_number = request.args.get('subchapterNumber')
     exercise_number = request.args.get('number')
-    sql_code = f'SELECT * FROM exercises WHERE bookId="{book_id}" AND chapterNumber={chapter_number} AND subchapterNumber={subchapter_number} AND number={exercise_number}'
+    sql_code = f"SELECT * FROM exercises WHERE bookId='{book_id}' AND chapterNumber={chapter_number} AND subchapterNumber={subchapter_number} AND number={exercise_number}"
     return execute_sql_select_with_response(sql_code, True)
 
 if __name__ == "__main__":
