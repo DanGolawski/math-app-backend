@@ -84,7 +84,7 @@ def get_chapters_with_subchapters_for_book():
 @app.route('/exercises', methods=['POST'])
 def add_new_exercise():
     exercise = request.json
-    sql_code = f"INSERT INTO exercises (bookId, chapterNumber, subchapterNumber, number, imageUrl, videoUrl, identifier) VALUES ('{exercise['bookId']}', {exercise['chapterNumber']}, {exercise['subchapterNumber']}, {exercise['number']}, '{exercise['imageUrl']}', '{exercise['videoUrl']}', '{exercise['bookId']}_{exercise['chapterNumber']}_{exercise['subchapterNumber']}')"
+    sql_code = f"INSERT INTO exercises (bookId, chapterNumber, subchapterNumber, number, imageUrl, videoUrl, identifier) VALUES ('{exercise['bookId']}', {exercise['chapterNumber']}, {exercise['subchapterNumber']}, {exercise['number']}, '{exercise['imageUrl']}', '{exercise['videoUrl']}', '{exercise['bookId']}_{exercise['chapterNumber']}_{exercise['subchapterNumber']}_{exercise['number']}')"
     return execute_sql_insert_with_response(sql_code, True)
 
 @app.route('/exercises', methods=['GET'])
