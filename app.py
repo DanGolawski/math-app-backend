@@ -2,7 +2,6 @@ from flask import Flask, request
 from sql_service import *
 from math_book_service import *
 from flask_cors import CORS
-import os
 
 app = Flask(__name__)
 CORS(app)
@@ -84,7 +83,7 @@ def get_chapters_with_subchapters_for_book():
 @app.route('/exercises', methods=['POST'])
 def add_new_exercise():
     exercise = request.json
-    sql_code = f"INSERT INTO exercises (bookId, chapterNumber, subchapterNumber, number, imageUrl, videoUrl, identifier) VALUES ('{exercise['bookId']}', {exercise['chapterNumber']}, {exercise['subchapterNumber']}, {exercise['number']}, '{exercise['imageUrl']}', '{exercise['videoUrl']}', '{exercise['bookId']}_{exercise['chapterNumber']}_{exercise['subchapterNumber']}_{exercise['number']}')"
+    sql_code = f"INSERT INTO exercises (bookId, chapterNumber, subchapterNumber, number, imageUrl, videoUrl, identifier) VALUES ('{exercise['bookId']}', {exercise['chapterNumber']}, {exercise['subchapterNumber']}, {exercise['number']}, '{exercise['imageUrl']}', '{exercise['videoUrl']}', '{exercise['bookId']}_{exercise['chapterNumber']}_{exercise['subchapterNumber']}_{exercise['number']}');"
     return execute_sql_insert_with_response(sql_code, True)
 
 @app.route('/exercises', methods=['GET'])
@@ -93,8 +92,40 @@ def get_exercises():
     chapter_number = request.args.get('chapterNumber')
     subchapter_number = request.args.get('subchapterNumber')
     exercise_number = request.args.get('number')
-    sql_code = f"SELECT * FROM exercises WHERE bookId='{book_id}' AND chapterNumber={chapter_number} AND subchapterNumber={subchapter_number} AND number={exercise_number}"
-    return execute_sql_select_with_response(sql_code, True)
+    print(f'getting exercises: {exercise_number} form {book_id}/{chapter_number}/{subchapter_number}')
+    try:
+        sql_code = f"SELECT * FROM exercises WHERE bookId='{book_id}' AND chapterNumber={chapter_number} AND subchapterNumber={subchapter_number} AND number={exercise_number};"
+        exercise = execute_sql_select(sql_code)
+        if len(exercise) == 0:
+            return 'No exercise found', 400
+        exercise = exercise[0]
+        related_videos = execute_sql_select(f"SELECT videoid FROM exercise_video WHERE exerciseid = {exercise['id']};")
+        related_videos = ','.join(str(v['videoid']) for v in related_videos)
+        related_videos = execute_sql_select(f"SELECT * from videos WHERE id IN ({','.join(related_videos)});")
+        exercise['relatedvideos'] = related_videos
+        return exercise
+    except psycopg2.Error as error:
+        return 'ERROR OCCURED', 400
+#VIDEOS
+@app.route('/videos', methods=['POST'])
+def add_new_video():
+    video = request.json
+    sql_code = f"INSERT INTO videos (title, url) VALUES ('{video['title']}', '{video['url']}')"
+    return execute_sql_insert_with_response(sql_code, True)
+
+@app.route('/exercises-videos', methods=['POST'])
+def add_new_exercise_video_relation():
+    relation = request.json
+    video_title = relation['videotitle']
+    exercise = relation['exercise']
+    video_id = execute_sql_select(f"SELECT id from videos WHERE title = '{video_title}';")
+    if len(video_id) == 0:
+        return 'No video found', 400
+    exercise_id = execute_sql_select(f"SELECT id from exercises WHERE bookId = '{exercise['bookid']}' AND chapterNumber = {exercise['chapter']} AND subchapterNumber = {exercise['subchapter']} AND number = {exercise['number']};")
+    if len(exercise_id) == 0:
+        return 'No exercise found', 400
+    sql_code = f"INSERT INTO exercise_video (exerciseid, videoid) VALUES ({exercise_id[0]['id']}, {video_id[0]['id']});"
+    return execute_sql_insert_with_response(sql_code, True)
 
 if __name__ == "__main__":
     app.run()

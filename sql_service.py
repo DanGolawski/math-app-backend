@@ -35,9 +35,9 @@ def execute_sql_select_with_response(sql_code, status_code):
    try:
       records = execute_sql_select(sql_code)
       if status_code:
-         return jsonify(records), 200
+         return records, 200
       else:
-         return jsonify(records)
+         return records
    except psycopg2.Error as error:
       print('failed to read data:', error)
       if status_code:
@@ -67,7 +67,7 @@ def execute_sql_select(sql_code):
    records = cursor.fetchall()
    cursor.close()
    connection.close()
-   return records
+   return jsonify(records).json
 
 def get_cursor():
    connection = psycopg2.connect(production_db_url)

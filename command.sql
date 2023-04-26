@@ -38,7 +38,8 @@ CREATE TABLE exercises(
   number INTEGER NOT NULL,
   imageUrl VARCHAR(255) NOT NULL,
   videoUrl VARCHAR(255) NOT NULL,
-  identifier VARCHAR(255) NOT NULL UNIQUE
+  identifier VARCHAR(255) NOT NULL UNIQUE,
+  relatedvideos VARCHAR(255)
 );
 
 CREATE TABLE recommendedbooks(
@@ -54,6 +55,17 @@ CREATE TABLE recommendedvideos(
    author VARCHAR(255),
    url VARCHAR(255) UNIQUE
 );
+
+CREATE TABLE videos(
+  id SERIAL PRIMARY KEY,
+  url VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+)
+
+CREATE TABLE exercise_video(
+  exerciseid INTEGER NOT NULL,
+  videoid INTEGER NOT NULL
+)
 
 -- DELETE FROM books;
 -- DELETE FROM chapters;
