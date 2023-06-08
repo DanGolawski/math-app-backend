@@ -97,7 +97,7 @@ def get_exercises():
         sql_code = f"SELECT * FROM exercises WHERE bookId='{book_id}' AND chapterNumber={chapter_number} AND subchapterNumber={subchapter_number} AND number={exercise_number};"
         exercise = execute_sql_select(sql_code)
         if len(exercise) == 0:
-            return 'No exercise found', 400
+            return 'No exercise found', 404
         exercise = exercise[0]
         related_videos = execute_sql_select(f"SELECT videoid FROM exercise_video WHERE exerciseid = {exercise['id']};")
         if (len(related_videos) > 0):
