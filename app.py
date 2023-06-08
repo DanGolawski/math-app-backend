@@ -100,8 +100,9 @@ def get_exercises():
             return 'No exercise found', 400
         exercise = exercise[0]
         related_videos = execute_sql_select(f"SELECT videoid FROM exercise_video WHERE exerciseid = {exercise['id']};")
-        related_videos = ','.join(str(v['videoid']) for v in related_videos)
-        related_videos = execute_sql_select(f"SELECT * from videos WHERE id IN ({','.join(related_videos)});")
+        if (len(related_videos) > 0):
+            related_videos = ','.join(str(v['videoid']) for v in related_videos)
+            related_videos = execute_sql_select(f"SELECT * from videos WHERE id IN ({','.join(related_videos)});")
         exercise['relatedvideos'] = related_videos
         return exercise
     except psycopg2.Error as error:
