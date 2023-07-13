@@ -3,9 +3,8 @@ import psycopg2
 import psycopg2.extras
 import config
 
-sqliteConnection = None
-
 postgres_connection = None
+cursor = None
 
 # funkcja aby sqlite zwracał dictionary zamiast values list https://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query
 def dict_factory(cursor, row):
@@ -28,8 +27,8 @@ def execute_sql_insert_with_response(sql_code, status_code):
       else:
          return f'{error}'
    finally:
-      if sqliteConnection:
-         sqliteConnection.close()
+      if postgres_connection:
+         postgres_connection.close()
          print("The SQLite connection is closed")
 
 def execute_sql_select_with_response(sql_code, status_code):
@@ -46,37 +45,35 @@ def execute_sql_select_with_response(sql_code, status_code):
       else:
          return f'{error}'
    finally:
-      if sqliteConnection:
-         sqliteConnection.close()
+      if postgres_connection:
+         postgres_connection.close()
          print('The SQLite connection is closed')
 
 def execute_sql_insert(sql_code):
    print('start execution of INSERT method')
-   cursor = get_cursor()
+   connect()
    print("Successfully Connected to SQLite")
    cursor.execute(sql_code)
    postgres_connection.commit()
    print("Operation executed successfully")
-   cursor.close()
-   postgres_connection.close()
+   close()
 
 def execute_sql_select(sql_code):
    print('start execution of SELECT method')
-   cursor = get_cursor()
+   connect()
    print('Successfully Connected to SQLite')
    cursor.execute(sql_code)
    records = cursor.fetchall()
-   cursor.close()
-   postgres_connection.close()
+   close()
    return jsonify(records).json
 
-def get_cursor():
-    if postgres_connection == None:
-        connect()
-    cursor = postgres_connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-    return cursor
-
 def connect():
-    global postgres_connection 
+    global postgres_connection
+    global cursor
     postgres_connection = psycopg2.connect(**config.PRODUCTION_DATABASE_EXTERNAL)
+    cursor = postgres_connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
+def close():
+    cursor.close()
+    postgres_connection.close()
 
