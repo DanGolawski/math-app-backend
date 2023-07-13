@@ -4,7 +4,6 @@ def map_to_sql_row_values(object_values):
 
 def map_value_by_type(value):
     value_type = type(value)
-    print(value, type(value))
     if value_type is str:
         return f"'{value}'"
     else:

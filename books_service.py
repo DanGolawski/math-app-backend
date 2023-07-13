@@ -14,13 +14,18 @@ def get_chapters_with_subchapters_by(bookid):
     chapter_objects = []
     curr_chapter_number = None
     for record in chapters_and_subchapters:
-        if record['number'] == curr_chapter_number:
-            chapter_objects[-1]['subchapters'].append({'id': record['id'], 'number': record['subchapternumber'], 'title': record['subchaptertitle']})
-        else:
+        if record['number'] != curr_chapter_number:
             curr_chapter_number = record['number']
             chapter_objects.append({
                 'number': record['number'],
                 'title': record['title'],
                 'subchapters': [],
             })
+        add_subchapter_to_chapter(chapter_objects[-1], record)
     return chapter_objects
+
+def add_subchapter_to_chapter(current_chapter, db_row):
+    if db_row['id'] == None:
+        return
+    current_chapter['subchapters'].append({'id': db_row['id'], 'number': db_row['subchapternumber'], 'title': db_row['subchaptertitle']})
+

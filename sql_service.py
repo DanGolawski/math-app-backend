@@ -5,6 +5,8 @@ import config
 
 sqliteConnection = None
 
+postgres_connection = None
+
 # funkcja aby sqlite zwracał dictionary zamiast values list https://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query
 def dict_factory(cursor, row):
     d = {}
@@ -50,31 +52,31 @@ def execute_sql_select_with_response(sql_code, status_code):
 
 def execute_sql_insert(sql_code):
    print('start execution of INSERT method')
-   connection, cursor = get_cursor()
+   cursor = get_cursor()
    print("Successfully Connected to SQLite")
    cursor.execute(sql_code)
-   connection.commit()
+   postgres_connection.commit()
    print("Operation executed successfully")
    cursor.close()
-   connection.close()
+   postgres_connection.close()
 
 def execute_sql_select(sql_code):
    print('start execution of SELECT method')
-   connection, cursor = get_cursor()
+   cursor = get_cursor()
    print('Successfully Connected to SQLite')
    cursor.execute(sql_code)
    records = cursor.fetchall()
    cursor.close()
-   connection.close()
+   postgres_connection.close()
    return jsonify(records).json
 
 def get_cursor():
-    connection = psycopg2.connect(
-        host=config.DATABASE['host'],
-        database=config.DATABASE['database'],
-        user=config.DATABASE['user'],
-        password=config.DATABASE['password']
-    )
-    cursor = connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-    return connection, cursor
-   
+    if postgres_connection == None:
+        connect()
+    cursor = postgres_connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+    return cursor
+
+def connect():
+    global postgres_connection 
+    postgres_connection = psycopg2.connect(**config.PRODUCTION_DATABASE_EXTERNAL)
+

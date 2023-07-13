@@ -4,6 +4,7 @@ from math_book_service import *
 import exercises_service
 import books_service
 from flask_cors import CORS
+import sql_service
 
 app = Flask(__name__)
 CORS(app)
@@ -127,4 +128,5 @@ def get_exercises(subchapterid, number):
         return f'{error}', 400
 
 if __name__ == "__main__":
+    sql_service.connect()
     app.run()
