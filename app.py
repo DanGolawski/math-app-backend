@@ -1,6 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify, json
 from sql_service import *
 from math_book_service import *
+import exercises_service
+import books_service
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -59,54 +61,6 @@ def add_new_book():
             errors['subchapters'].append(insert_new_subchapter(book['id'], chapter['number'], subchapter))
     return jsonify(errors), 200
 
-@app.route('/books', methods=['GET'])
-def get_books():
-    sql_code = 'SELECT * FROM books;'
-    return execute_sql_select_with_response(sql_code, True)
-
-
-# CHAPTERS
-@app.route('/chapters', methods=['GET'])
-def get_chapters_with_subchapters_for_book():
-    book_id = request.args.get('bookId')
-    return get_chapters_with_subchapters(book_id)
-
-# DO DOKONCZENIA
-# @app.route('/subchapters', methods=['PUT'])
-# def update_subchapter_data():
-#     subchapter = request.json
-#     for key in subchapter:
-#         print(key)
-#     return 'done', 200
-
-# EXERCISES
-@app.route('/exercises', methods=['POST'])
-def add_new_exercise():
-    exercise = request.json
-    sql_code = f"INSERT INTO exercises (bookId, chapterNumber, subchapterNumber, number, imageUrl, videoUrl, identifier) VALUES ('{exercise['bookId']}', {exercise['chapterNumber']}, {exercise['subchapterNumber']}, {exercise['number']}, '{exercise['imageUrl']}', '{exercise['videoUrl']}', '{exercise['bookId']}_{exercise['chapterNumber']}_{exercise['subchapterNumber']}_{exercise['number']}');"
-    return execute_sql_insert_with_response(sql_code, True)
-
-@app.route('/exercises', methods=['GET'])
-def get_exercises():
-    book_id = request.args.get('bookId')
-    chapter_number = request.args.get('chapterNumber')
-    subchapter_number = request.args.get('subchapterNumber')
-    exercise_number = request.args.get('number')
-    print(f'getting exercises: {exercise_number} form {book_id}/{chapter_number}/{subchapter_number}')
-    try:
-        sql_code = f"SELECT * FROM exercises WHERE bookId='{book_id}' AND chapterNumber={chapter_number} AND subchapterNumber={subchapter_number} AND number={exercise_number};"
-        exercise = execute_sql_select(sql_code)
-        if len(exercise) == 0:
-            return 'No exercise found', 404
-        exercise = exercise[0]
-        related_videos = execute_sql_select(f"SELECT videoid FROM exercise_video WHERE exerciseid = {exercise['id']};")
-        if (len(related_videos) > 0):
-            related_videos = ','.join(str(v['videoid']) for v in related_videos)
-            related_videos = execute_sql_select(f"SELECT * from videos WHERE id IN ({','.join(related_videos)});")
-        exercise['relatedvideos'] = related_videos
-        return exercise
-    except psycopg2.Error as error:
-        return 'ERROR OCCURED', 400
 #VIDEOS
 @app.route('/videos', methods=['POST'])
 def add_new_video():
@@ -127,6 +81,50 @@ def add_new_exercise_video_relation():
         return 'No exercise found', 400
     sql_code = f"INSERT INTO exercise_video (exerciseid, videoid) VALUES ({exercise_id[0]['id']}, {video_id[0]['id']});"
     return execute_sql_insert_with_response(sql_code, True)
+
+### BOOKS ###
+@app.post('/books')
+def add_book():
+    book_title = request.json['title']
+    try:
+        return books_service.add_book(book_title)
+    except psycopg2.Error as error:
+        return f"{error}"
+
+@app.get('/books')
+def get_books():
+    try:
+        return books_service.get_books()
+    except psycopg2.Error as error:
+        return f"{error}", 400
+
+@app.get('/books/chapters/<bookid>')
+def get_chapters_for_book(bookid):
+    try:
+        return books_service.get_chapters_with_subchapters_by(bookid)
+    except psycopg2.Error as error:
+        return f"{error}", 400
+    
+
+### EXERCISES ###
+@app.post('/exercises/add')
+def add_new_exercise():
+    try:
+        request_json = json.loads(request.form.get('data'))
+        request_image = request.files['image'] if 'image' in request.files else None
+        return exercises_service.add_new_exercise(request_json, request_image)
+    except psycopg2.Error as error:
+        print(error)
+        return f'{error}', 400
+
+@app.get('/exercises/get/<subchapterid>/<number>')
+def get_exercises(subchapterid, number):
+    # TODO: zaimplementować walidację
+    try:
+        return exercises_service.get_exercises(subchapterid, number)
+    except psycopg2.Error as error:
+        print(error)
+        return f'{error}', 400
 
 if __name__ == "__main__":
     app.run()

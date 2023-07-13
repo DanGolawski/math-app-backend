@@ -1,10 +1,9 @@
 from flask import jsonify
 import psycopg2
 import psycopg2.extras
+import config
 
 sqliteConnection = None
-development_db_url = 'postgres://mathmasters:2NdXFwI7icbLaAVIojPy4CAjEJdOEQmt@dpg-cgi42st269v5faa61dtg-a.frankfurt-postgres.render.com/mathapp'
-production_db_url = 'postgres://mathmasters:2NdXFwI7icbLaAVIojPy4CAjEJdOEQmt@dpg-cgi42st269v5faa61dtg-a/mathapp'
 
 # funkcja aby sqlite zwracał dictionary zamiast values list https://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query
 def dict_factory(cursor, row):
@@ -70,9 +69,12 @@ def execute_sql_select(sql_code):
    return jsonify(records).json
 
 def get_cursor():
-   connection = psycopg2.connect(production_db_url)
-
-   # Open a cursor to perform database operations
-   cursor = connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-   return connection, cursor
+    connection = psycopg2.connect(
+        host=config.DATABASE['host'],
+        database=config.DATABASE['database'],
+        user=config.DATABASE['user'],
+        password=config.DATABASE['password']
+    )
+    cursor = connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+    return connection, cursor
    
