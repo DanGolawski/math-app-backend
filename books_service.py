@@ -9,7 +9,7 @@ def get_books():
     return sql_service.execute_sql_select('SELECT * FROM books')
 
 def get_chapters_with_subchapters_by(bookid):
-    sql_query = f"SELECT chapters.number, chapters.title, subchapters.id, subchapters.number as subchapternumber, subchapters.title as subchaptertitle FROM chapters LEFT JOIN subchapters ON chapters.id = subchapters.chapterid WHERE chapters.bookid = {bookid} ORDER BY chapters.number;"
+    sql_query = f"SELECT chapters.number, chapters.title, subchapters.id, subchapters.number as subchapternumber, subchapters.title as subchaptertitle, subchapters.firstexercise, subchapters.exercisesnumber FROM chapters LEFT JOIN subchapters ON chapters.id = subchapters.chapterid WHERE chapters.bookid = {bookid} ORDER BY chapters.number;"
     chapters_and_subchapters = sql_service.execute_sql_select(sql_query)
     chapter_objects = []
     curr_chapter_number = None
@@ -27,5 +27,11 @@ def get_chapters_with_subchapters_by(bookid):
 def add_subchapter_to_chapter(current_chapter, db_row):
     if db_row['id'] == None:
         return
-    current_chapter['subchapters'].append({'id': db_row['id'], 'number': db_row['subchapternumber'], 'title': db_row['subchaptertitle']})
+    current_chapter['subchapters'].append({
+        'id': db_row['id'],
+        'number': db_row['subchapternumber'],
+        'title': db_row['subchaptertitle'],
+        'firstexercise': db_row['firstexercise'],
+        'exercisesnumber': db_row['exercisesnumber']    
+    })
 
