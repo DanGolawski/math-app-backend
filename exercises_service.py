@@ -24,6 +24,5 @@ def add_exercise_image(exercise_image, image_name):
 def get_exercises(subchapter, number):
     sql_query = f"SELECT * FROM exercises WHERE subchapter={subchapter} AND number={number}"
     result = sql_service.execute_sql_select(sql_query)
-    return {
-        'exercise': result[0] if len(result) > 0 else None
-    }
+    return result[0] if len(result) > 0 else ('', 204)
+    
