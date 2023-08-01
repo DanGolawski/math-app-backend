@@ -24,3 +24,8 @@ PRODUCTION_DATABASE_INTERNAL = {
     'user': 'postgres',
     'password':'12345'
 }
+
+EMAIL_DATA = {
+    'email': 'mathmasters.contact@gmail.com',
+    'password': 'eubmxofncoaklwyw'
+}

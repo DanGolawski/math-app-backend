@@ -127,6 +127,14 @@ def get_exercises(subchapterid, number):
         print(error)
         return f'{error}', 400
 
+@app.post('exercises/request')
+def handle_exercise_request():
+    exercise_details = request.json
+    try:
+        exercises_service.send_exercise_request()
+    except:
+        print('blad podczas wysylania emaila', exercise_details['subchapter'], exercise_details['exercise'])
+
 if __name__ == "__main__":
     sql_service.connect()
     app.run()
