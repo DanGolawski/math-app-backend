@@ -7,7 +7,7 @@ import email_handler
 def add_new_exercise(exercise_data, exercise_image):
     add_exercise_data(exercise_data)
     if exercise_image != None:
-        image_name = f'{exercise_data["subchapter"]}_{exercise_data["number"]}.png'
+        image_name = f'{exercise_data["subchapterid"]}_{exercise_data["number"]}.png'
         add_exercise_image(exercise_image, image_name)
     return 'added'
 
@@ -28,11 +28,16 @@ def get_exercises(subchapter, number):
     return result[0] if len(result) > 0 else ('', 204)
 
 def send_exercise_request(exercise_data):
-    sql_query = f'SELECT chapter.title as chapter, subchapter.title as subchapter FROM subchapters INNER JOIN chapters ON subchapter.chapterid = chapter.id WHERE subchapters.id = {exercise_data["subchapter"]}'
+    sql_query = f'SELECT chapters.title as chapter, subchapters.title as subchapter FROM subchapters INNER JOIN chapters ON subchapters.chapterid = chapters.id WHERE subchapters.id = {exercise_data["subchapter"]}'
     result = sql_service.execute_sql_select(sql_query)
-    email_handler.create_message(
+    data = result[0] if len(result) > 0 else None
+    if (data == None):
+        return 'no chapter or subchapter'
+    message = email_handler.create_message(
         'mathmasters.contact@gmail.com',
-        'Prosba o zadanie'
-        f'rozdzial: {result["chapter"]}, temat: {result["subchapter"]}, zadanie: {exercise_data}'
+        'Prosba o zadanie',
+        f'ROZDZIAL: {data["chapter"]}, TEMAT: {data["subchapter"]}, ZADANIE: {exercise_data["exercise"]}'
     )
+    email_handler.send_message(message)
+    return 'done'
     
