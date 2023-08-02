@@ -22,8 +22,8 @@ def add_exercise_image(exercise_image, image_name):
     filename = secure_filename(image_name)
     exercise_image.save(os.path.join('EXERCISES', filename))
 
-def get_exercises(subchapter, number):
-    sql_query = f"SELECT * FROM exercises WHERE subchapter={subchapter} AND number={number}"
+def get_exercises(subchapterid, number):
+    sql_query = f"SELECT * FROM exercises WHERE subchapterid={subchapterid} AND number={number}"
     result = sql_service.execute_sql_select(sql_query)
     return result[0] if len(result) > 0 else ('', 204)
 
