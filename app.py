@@ -17,7 +17,7 @@ def hello():
 @app.route('/recommended-videos', methods=['POST'])
 def add_recommended_video():
     new_video = request.json
-    sql_code = f"INSERT INTO recommendedvideos (author, title, url) VALUES ('{new_video['author']}', '{new_video['title']}', '{new_video['url']}');"
+    sql_code = f"INSERT INTO recommendedvideos (author, title, url) VALUES ('{new_video['author']}', '{new_video['title']}', '{new_video['url']}')"
     return execute_sql_insert_with_response(sql_code, True)
 
 @app.route('/recommended-videos', methods=['GET'])
@@ -27,7 +27,7 @@ def get_recommended_videos():
 
 @app.route('/recommended-videos/<videoId>', methods=['DELETE'])
 def delete_recommended_video(videoId):
-    sql_code = f'DELETE FROM recommendedvideos WHERE id={videoId};'
+    sql_code = f'DELETE FROM recommendedvideos WHERE id={videoId}'
     return execute_sql_insert_with_response(sql_code, True)
 
 
@@ -35,17 +35,17 @@ def delete_recommended_video(videoId):
 @app.route('/recommended-books', methods=['POST'])
 def add_recommended_books():
     new_book = request.json
-    sql_code = f"INSERT INTO recommendedbooks (author, title, imageUrl) VALUES ('{new_book['author']}', '{new_book['title']}', '{new_book['imageUrl']}');"
+    sql_code = f"INSERT INTO recommendedbooks (author, title, imageUrl) VALUES ('{new_book['author']}', '{new_book['title']}', '{new_book['imageUrl']}')"
     return execute_sql_insert_with_response(sql_code, True)
 
 @app.route('/recommended-books', methods=['GET'])
 def get_recommended_books():
-    sql_code = 'SELECT * FROM recommendedbooks;'
+    sql_code = 'SELECT * FROM recommendedbooks'
     return execute_sql_select_with_response(sql_code, True)
 
 @app.route('/recommended-books/<bookId>', methods=['DELETE'])
 def delete_recommended_book(bookId):
-    sql_code = f'DELETE FROM recommendedbooks WHERE id={bookId};'
+    sql_code = f'DELETE FROM recommendedbooks WHERE id={bookId}'
     return execute_sql_insert_with_response(sql_code, True)
 
 # MATH BOOKS
@@ -74,13 +74,13 @@ def add_new_exercise_video_relation():
     relation = request.json
     video_title = relation['videotitle']
     exercise = relation['exercise']
-    video_id = execute_sql_select(f"SELECT id from videos WHERE title = '{video_title}';")
+    video_id = execute_sql_select(f"SELECT id from videos WHERE title = '{video_title}'")
     if len(video_id) == 0:
         return 'No video found', 400
-    exercise_id = execute_sql_select(f"SELECT id from exercises WHERE bookId = '{exercise['bookid']}' AND chapterNumber = {exercise['chapter']} AND subchapterNumber = {exercise['subchapter']} AND number = {exercise['number']};")
+    exercise_id = execute_sql_select(f"SELECT id from exercises WHERE bookId = '{exercise['bookid']}' AND chapterNumber = {exercise['chapter']} AND subchapterNumber = {exercise['subchapter']} AND number = {exercise['number']}")
     if len(exercise_id) == 0:
         return 'No exercise found', 400
-    sql_code = f"INSERT INTO exercise_video (exerciseid, videoid) VALUES ({exercise_id[0]['id']}, {video_id[0]['id']});"
+    sql_code = f"INSERT INTO exercise_video (exerciseid, videoid) VALUES ({exercise_id[0]['id']}, {video_id[0]['id']})"
     return execute_sql_insert_with_response(sql_code, True)
 
 ### BOOKS ###
@@ -120,7 +120,6 @@ def add_new_exercise():
 
 @app.get('/exercises/get/<subchapterid>/<number>')
 def get_exercises(subchapterid, number):
-    # TODO: zaimplementować walidację
     try:
         return exercises_service.get_exercises(subchapterid, number)
     except psycopg2.Error as error:

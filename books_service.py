@@ -1,7 +1,7 @@
 import sql_service
 
 def add_book(title):
-    sql_code = f"INSERT INTO books (title) VALUES ({title});"
+    sql_code = f"INSERT INTO books (title) VALUES ({title})"
     sql_service.execute_sql_insert(sql_code)
     return 'added'
 
@@ -9,7 +9,7 @@ def get_books():
     return sql_service.execute_sql_select('SELECT * FROM books')
 
 def get_chapters_with_subchapters_by(bookid):
-    sql_query = f"SELECT chapters.number, chapters.title, subchapters.id, subchapters.number as subchapternumber, subchapters.title as subchaptertitle, subchapters.firstexercise, subchapters.exercisesnumber FROM chapters LEFT JOIN subchapters ON chapters.id = subchapters.chapterid WHERE chapters.bookid = {bookid} ORDER BY chapters.number;"
+    sql_query = f"SELECT chapters.number, chapters.title, subchapters.id, subchapters.number as subchapternumber, subchapters.title as subchaptertitle, subchapters.firstexercise, subchapters.exercisesnumber FROM chapters LEFT JOIN subchapters ON chapters.id = subchapters.chapterid WHERE chapters.bookid = {bookid} ORDER BY chapters.number"
     chapters_and_subchapters = sql_service.execute_sql_select(sql_query)
     chapter_objects = []
     curr_chapter_number = None

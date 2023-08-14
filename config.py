@@ -1,7 +1,6 @@
 development_db_url = 'postgres://mathmasters:2NdXFwI7icbLaAVIojPy4CAjEJdOEQmt@dpg-cgi42st269v5faa61dtg-a.frankfurt-postgres.render.com/mathapp'
 production_db_url = 'postgres://mathmasters:2NdXFwI7icbLaAVIojPy4CAjEJdOEQmt@dpg-cgi42st269v5faa61dtg-a/mathapp'
 
-
 LOCAL_DATABASE = {
     'host': 'localhost',
     'port': '5432',
@@ -29,3 +28,5 @@ EMAIL_DATA = {
     'email': 'mathmasters.contact@gmail.com',
     'password': 'eubmxofncoaklwyw'
 }
+
+DATABASE = LOCAL_DATABASE

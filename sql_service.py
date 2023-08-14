@@ -70,7 +70,7 @@ def execute_sql_select(sql_code):
 def connect():
     global postgres_connection
     global cursor
-    postgres_connection = psycopg2.connect(**config.PRODUCTION_DATABASE_EXTERNAL)
+    postgres_connection = psycopg2.connect(**config.DATABASE)
     cursor = postgres_connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
 def close():

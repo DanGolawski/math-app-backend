@@ -2,6 +2,7 @@ CREATE TABLE exercises(
 	id SERIAL PRIMARY KEY,
 	subchapterid INT NOT NULL,
 	number INT NOT NULL,
+	image TEXT NOT NULL,
 	video TEXT,
 	UNIQUE(subchapterid, number)
 );
