@@ -14,14 +14,14 @@ PRODUCTION_DATABASE_EXTERNAL = {
     'port': '5432',
     'database': 'mathapp',
     'user': 'postgres',
-    'password':'12345'
+    'password':'Zarabiac20TysiecyMiesiecznie()'
 }
 
 PRODUCTION_DATABASE_INTERNAL = {
     'host': 'localhost',
     'database': 'mathapp',
     'user': 'postgres',
-    'password':'12345'
+    'password':'Zarabiac20TysiecyMiesiecznie()'
 }
 
 EMAIL_DATA = {
